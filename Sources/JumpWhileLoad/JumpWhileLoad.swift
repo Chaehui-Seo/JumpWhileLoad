@@ -41,6 +41,7 @@ public class JumpWhileLoad {
         
         @MainActor
         public func build() -> (UIViewController & JumpGameControllable) {
+            FontRegistrar.registerFonts()
             let vc = JumpGameViewController()
             vc.character = character
             vc.jumpCharacter = jumpCharacter
