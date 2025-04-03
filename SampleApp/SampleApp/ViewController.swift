@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     
     @IBAction func buttonDidTap(_ sender: Any) {
         self.present(JumpWhileLoad.Builder().build(), animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             JumpWhileLoad.finishLoading()
         }
     }
