@@ -11,27 +11,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		BAE0BE5E2D77205100D19D8E /* SampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BAE0BE5E2D77205100D19D8E /* SampleApp-UIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SampleApp-UIKit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAE0BE772D77206000D19D8E /* JumpWhileLoad */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = JumpWhileLoad; path = ..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BAE0BE702D77205300D19D8E /* Exceptions for "SampleApp" folder in "SampleApp" target */ = {
+		BA30D4752DA2981B00F2B03E /* Exceptions for "SampleApp-UIKit" folder in "SampleApp-UIKit" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = BAE0BE5D2D77205100D19D8E /* SampleApp */;
+			target = BAE0BE5D2D77205100D19D8E /* SampleApp-UIKit */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BAE0BE602D77205100D19D8E /* SampleApp */ = {
+		BAE0BE602D77205100D19D8E /* SampleApp-UIKit */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				BAE0BE702D77205300D19D8E /* Exceptions for "SampleApp" folder in "SampleApp" target */,
+				BA30D4752DA2981B00F2B03E /* Exceptions for "SampleApp-UIKit" folder in "SampleApp-UIKit" target */,
 			);
-			path = SampleApp;
+			path = "SampleApp-UIKit";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -51,7 +51,7 @@
 		BAE0BE552D77205100D19D8E = {
 			isa = PBXGroup;
 			children = (
-				BAE0BE602D77205100D19D8E /* SampleApp */,
+				BAE0BE602D77205100D19D8E /* SampleApp-UIKit */,
 				BAE0BE762D77206000D19D8E /* Frameworks */,
 				BAE0BE5F2D77205100D19D8E /* Products */,
 			);
@@ -60,7 +60,7 @@
 		BAE0BE5F2D77205100D19D8E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BAE0BE5E2D77205100D19D8E /* SampleApp.app */,
+				BAE0BE5E2D77205100D19D8E /* SampleApp-UIKit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -76,9 +76,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BAE0BE5D2D77205100D19D8E /* SampleApp */ = {
+		BAE0BE5D2D77205100D19D8E /* SampleApp-UIKit */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BAE0BE712D77205300D19D8E /* Build configuration list for PBXNativeTarget "SampleApp" */;
+			buildConfigurationList = BAE0BE712D77205300D19D8E /* Build configuration list for PBXNativeTarget "SampleApp-UIKit" */;
 			buildPhases = (
 				BAE0BE5A2D77205100D19D8E /* Sources */,
 				BAE0BE5B2D77205100D19D8E /* Frameworks */,
@@ -89,14 +89,14 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				BAE0BE602D77205100D19D8E /* SampleApp */,
+				BAE0BE602D77205100D19D8E /* SampleApp-UIKit */,
 			);
-			name = SampleApp;
+			name = "SampleApp-UIKit";
 			packageProductDependencies = (
 				BAE0BE782D77207400D19D8E /* JumpWhileLoad */,
 			);
 			productName = SampleApp;
-			productReference = BAE0BE5E2D77205100D19D8E /* SampleApp.app */;
+			productReference = BAE0BE5E2D77205100D19D8E /* SampleApp-UIKit.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -114,7 +114,7 @@
 					};
 				};
 			};
-			buildConfigurationList = BAE0BE592D77205100D19D8E /* Build configuration list for PBXProject "SampleApp" */;
+			buildConfigurationList = BAE0BE592D77205100D19D8E /* Build configuration list for PBXProject "SampleApp-UIKit" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -128,7 +128,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BAE0BE5D2D77205100D19D8E /* SampleApp */,
+				BAE0BE5D2D77205100D19D8E /* SampleApp-UIKit */,
 			);
 		};
 /* End PBXProject section */
@@ -162,7 +162,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SampleApp/Info.plist;
+				INFOPLIST_FILE = "SampleApp-UIKit/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -173,7 +173,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jumpwhileload.SampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jumpwhileload.SampleApp-UIKit";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -189,7 +189,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SampleApp/Info.plist;
+				INFOPLIST_FILE = "SampleApp-UIKit/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -200,7 +200,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jumpwhileload.SampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jumpwhileload.SampleApp-UIKit";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -330,7 +330,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BAE0BE592D77205100D19D8E /* Build configuration list for PBXProject "SampleApp" */ = {
+		BAE0BE592D77205100D19D8E /* Build configuration list for PBXProject "SampleApp-UIKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BAE0BE742D77205300D19D8E /* Debug */,
@@ -339,7 +339,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BAE0BE712D77205300D19D8E /* Build configuration list for PBXNativeTarget "SampleApp" */ = {
+		BAE0BE712D77205300D19D8E /* Build configuration list for PBXNativeTarget "SampleApp-UIKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BAE0BE722D77205300D19D8E /* Debug */,
