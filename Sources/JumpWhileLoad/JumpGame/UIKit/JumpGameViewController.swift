@@ -1,7 +1,7 @@
 import UIKit
 
 @MainActor
-public protocol JumpGameControllable {
+public protocol JumpGameControllable: AnyObject {
     func finishLoading()
 }
 
