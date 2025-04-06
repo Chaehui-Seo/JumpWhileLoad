@@ -9,8 +9,12 @@ import UIKit
 import CoreText
 
 public enum FontRegistrar {
-    public static func registerFonts() {
+    @MainActor private static var isRegistered = false
+    
+    @MainActor public static func registerFonts() {
+        if (isRegistered) { return }
         registerFont(bundle: Bundle.module, fontName: "SourceCodePro-Bold", fontExtension: "ttf")
+        isRegistered = true
     }
 
     private static func registerFont(bundle: Bundle, fontName: String, fontExtension: String) {

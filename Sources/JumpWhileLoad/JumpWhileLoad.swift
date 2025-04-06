@@ -1,6 +1,6 @@
 import UIKit
 
-public class JumpWhileLoad {
+public enum JumpWhileLoad {
     static let finishLoadingNotification = Notification.Name("JumpWhileLoad.FinishLoading")
     
     public static func finishLoading() {

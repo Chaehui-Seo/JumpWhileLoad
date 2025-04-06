@@ -4,6 +4,7 @@ import UIKit
 extension JumpGameViewController {
     @objc func closeButtonDidTap() {
         self.dismiss(animated: true)
+//        JumpGamePresenter.dismissIfNeeded()
     }
     
     func makeLoadingEndView() -> UIView {

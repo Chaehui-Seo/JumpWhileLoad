@@ -137,6 +137,11 @@ class JumpGameViewController: UIViewController {
         ])
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+//        JumpGamePresenter.dismissIfNeeded()
+    }
+    
     func jump() {
         if jumpState == .tapDisabled || jumpState == .doubleTapDisabled {
             // 점프 가능한 상태인지 확인

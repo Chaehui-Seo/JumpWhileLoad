@@ -10,14 +10,14 @@ import SwiftUI
 public struct JumpWhileLoadView: UIViewControllerRepresentable {
     private let character: UIImage?
     private let jumpCharacter: UIImage?
-    private let normalObstacles: [UIImage]
-    private let wideObstacles: [UIImage]
+    private let normalObstacles: [UIImage]?
+    private let wideObstacles: [UIImage]?
 
     public init(
         character: UIImage? = nil,
         jumpCharacter: UIImage? = nil,
-        normalObstacles: [UIImage] = [],
-        wideObstacles: [UIImage] = []
+        normalObstacles: [UIImage]? = nil,
+        wideObstacles: [UIImage]? = nil
     ) {
         self.character = character
         self.jumpCharacter = jumpCharacter
@@ -26,13 +26,26 @@ public struct JumpWhileLoadView: UIViewControllerRepresentable {
     }
 
     public func makeUIViewController(context: Context) -> UIViewController {
-        return JumpWhileLoad
-            .builder()
-            .withCharacter(character ?? UIImage())
-            .withJumpCharacter(jumpCharacter ?? UIImage())
-            .withNormalObstacles(normalObstacles)
-            .withWideObstacles(wideObstacles)
-            .build()
+        var builder = JumpWhileLoad.builder()
+        
+        if let character {
+            builder = builder.withCharacter(character)
+        }
+        
+        if let jumpCharacter {
+            builder = builder.withJumpCharacter(jumpCharacter)
+        }
+        
+        if let normalObstacles {
+            builder = builder.withNormalObstacles(normalObstacles)
+        }
+        
+        if let wideObstacles {
+            builder = builder.withWideObstacles(wideObstacles)
+        }
+        let viewController = builder.build()
+        viewController.modalPresentationStyle = .overCurrentContext
+        return viewController
     }
 
     public func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) { }
