@@ -20,7 +20,7 @@ class ObstacleView: UIView {
                                width: Metric.normalSize,
                                height: Metric.normalSize)
             let imageView = UIImageView()
-            imageView.image = obstacleImages?.randomElement() ?? .init(named: ["obstacle_small_1", "obstacle_small_2"].randomElement() ?? "obstacle_small_1", in: .module, compatibleWith: nil)
+            imageView.image = obstacleImages?.randomElement() ?? .init(named: ["obstacle_normal_1", "obstacle_normal_2"].randomElement() ?? "obstacle_normal_1", in: .module, compatibleWith: nil)
             imageView.frame = .init(x: 0, y: 0, width: Metric.normalSize, height: Metric.normalSize)
             self.addSubview(imageView)
         case .wide:
@@ -29,7 +29,7 @@ class ObstacleView: UIView {
                                width: Metric.wideSize,
                                height: Metric.wideSize)
             let imageView = UIImageView()
-            imageView.image = obstacleImages?.randomElement() ?? .init(named: ["obstacle_big_1", "obstacle_big_2"].randomElement() ?? "obstacle_big_1", in: .module, compatibleWith: nil)
+            imageView.image = obstacleImages?.randomElement() ?? .init(named: ["obstacle_wide_1", "obstacle_wide_2"].randomElement() ?? "obstacle_wide_1", in: .module, compatibleWith: nil)
             imageView.frame = .init(x: 0, y: 0, width: Metric.wideSize, height: Metric.wideSize)
             self.addSubview(imageView)
         }
