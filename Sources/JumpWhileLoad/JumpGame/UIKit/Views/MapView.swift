@@ -45,7 +45,7 @@ class MapView: UIView {
         ])
     }
     
-    func setObstacles() {
+    func setObstacles(normalObstacles: [UIImage] = [], wideObstacles: [UIImage] = []) {
         var remainedWidth = self.frame.width // 장애물을 설치할 수 있는 너비
         var currentMinleading = Metric.minLeading // 현재의 최소 leading 위치
         while remainedWidth >= CGFloat(Metric.normalObstacles) {
@@ -54,10 +54,12 @@ class MapView: UIView {
                                 : [Metric.normalObstacles, Metric.wideObstacles].randomElement() ?? 0
             let obstacle = ObstacleView()
             let leadingPosition = Int.random(in: currentMinleading ... (Int(self.frame.width) - (obstacleWidth))) // 최소 leading ~ 최대 leading  중 위치시킬 leading 선정
-            obstacle.config(type: obstacleWidth == Metric.normalObstacles
-                                    ? .normal
-                                    : .wide,
-                            leading: leadingPosition)
+            let obstableType = obstacleWidth == Metric.normalObstacles
+                                ? ObstacleView.Size.normal
+                                : ObstacleView.Size.wide
+            obstacle.config(type: obstableType,
+                            leading: leadingPosition,
+                            obstacleImages: obstableType == .normal ? normalObstacles : wideObstacles)
             currentMinleading = leadingPosition + obstacleWidth + Metric.minLeading
             remainedWidth = remainedWidth - CGFloat((currentMinleading))
             self.addSubview(obstacle)

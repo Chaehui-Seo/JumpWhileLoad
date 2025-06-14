@@ -206,7 +206,8 @@ class JumpGameViewController: UIViewController {
                                height: Metric.MapView.height)
         mapContainerView.addSubview(mapView1)
         mapContainerView.addSubview(mapView2)
-        mapView2.setObstacles()
+        mapView2.setObstacles(normalObstacles: self.normalObstacles,
+                              wideObstacles: self.wideObstacles)
         currentMapViews = [mapView1, mapView2]
     }
     
@@ -248,7 +249,8 @@ class JumpGameViewController: UIViewController {
                                        y: Metric.MapView.initialY,
                                        width: self.mapContainerView.frame.width,
                                        height: Metric.MapView.height)
-                mapView3.setObstacles()
+                mapView3.setObstacles(normalObstacles: self.normalObstacles,
+                                      wideObstacles: self.wideObstacles)
                 self.mapContainerView.addSubview(mapView3)
                 self.currentMapViews = [lastMapView, mapView3]
             }
