@@ -17,11 +17,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bJi-EV-BvT">
-                                <rect key="frame" x="159" y="421" width="75" height="35"/>
+                                <rect key="frame" x="159" y="401" width="75" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="START"/>
                                 <connections>
                                     <action selector="buttonDidTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ChM-Or-bUb"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cus-TM-btn">
+                                <rect key="frame" x="109" y="456" width="175" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="tinted" title="CUSTOM START"/>
+                                <connections>
+                                    <action selector="customButtonDidTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cus-TM-act"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -30,6 +38,8 @@
                         <constraints>
                             <constraint firstItem="bJi-EV-BvT" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="H1p-MN-AiK"/>
                             <constraint firstItem="bJi-EV-BvT" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="ayp-YF-eXa"/>
+                            <constraint firstItem="cus-TM-btn" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="cus-X1-con"/>
+                            <constraint firstItem="cus-TM-btn" firstAttribute="top" secondItem="bJi-EV-BvT" secondAttribute="bottom" constant="20" id="cus-T2-con"/>
                         </constraints>
                     </view>
                 </viewController>
