@@ -4,6 +4,10 @@ import UIKit
 extension JumpGameViewController {
     // Metric values for UI
     enum Metric {
+        enum Game {
+            static let scrollSpeed: CGFloat = 150 // pixels per second
+        }
+
         enum GameView {
             static let leading: CGFloat = 20
             static let height: CGFloat = 400

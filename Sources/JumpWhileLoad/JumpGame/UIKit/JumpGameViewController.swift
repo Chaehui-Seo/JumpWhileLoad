@@ -23,8 +23,9 @@ class JumpGameViewController: UIViewController {
     lazy var loadingEndView = makeLoadingEndView()
     let loadingProgressView = LoadingProgressView()
     
-    var timer : Timer?
-    var animation = UIViewPropertyAnimator()
+    nonisolated(unsafe) var displayLink: CADisplayLink?
+    var lastTimestamp: CFTimeInterval = -1
+    var jumpAnimation = UIViewPropertyAnimator(duration: 0, curve: .linear, animations: nil)
     
     var currentMapViews: [MapView] = []
     
@@ -72,6 +73,7 @@ class JumpGameViewController: UIViewController {
     var jumpState: JumpState = .tapEnabled
     
     deinit {
+        displayLink?.invalidate()
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -80,8 +82,11 @@ class JumpGameViewController: UIViewController {
         self.view.backgroundColor = .black.withAlphaComponent(0.5)
         
         NotificationCenter.default.addObserver(self, selector: #selector(finishLoading), name: JumpWhileLoad.finishLoadingNotification, object: nil)
-        
-        // 게임 배경 세팅
+        // Reset the timestamp reference when the app returns from the background.
+        // (CADisplayLink pauses automatically in the background; this prevents a stale timestamp on resume.)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+
+        // Set up game background
         self.view.addSubview(gameView)
         gameView.addSubview(mapContainerView)
         gameView.addSubview(statusBar)
@@ -118,7 +123,7 @@ class JumpGameViewController: UIViewController {
             loadingEndView.bottomAnchor.constraint(equalTo: statusBar.bottomAnchor),
         ])
         
-        // 캐릭터 세팅
+        // Set up character
         characterView.frame = .init(x: Metric.CharacterView.initialX,
                                     y: Metric.CharacterView.initialY,
                                     width: Metric.CharacterView.width,
@@ -126,7 +131,7 @@ class JumpGameViewController: UIViewController {
         characterView.layer.cornerRadius = 2
         gameView.addSubview(characterView)
         
-        // retry뷰 세팅 (처음엔 Hide 상태)
+        // Set up retry overlay (initially hidden)
         retryView.isHidden = true
         gameView.addSubview(retryView)
         NSLayoutConstraint.activate([
@@ -137,31 +142,42 @@ class JumpGameViewController: UIViewController {
         ])
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-//        JumpGamePresenter.dismissIfNeeded()
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        displayLink?.invalidate()
+        displayLink = nil
+        if jumpAnimation.state == .active {
+            jumpAnimation.stopAnimation(true)
+        }
     }
-    
+
     func jump() {
         if jumpState == .tapDisabled || jumpState == .doubleTapDisabled {
-            // 점프 가능한 상태인지 확인
             return
         }
-        
+
+        // Double-jump during descent: commit the current visual position to the model frame to prevent snapping
+        if jumpAnimation.state == .active {
+            jumpAnimation.stopAnimation(true)
+            jumpAnimation.finishAnimation(at: .current)
+        }
+
         let targetY: CGFloat = jumpState == .doubleTapEnabled
                                 ? Metric.CharacterView.singleJumpY
                                 : Metric.CharacterView.doubleJumpY
         jumpState = jumpState == .doubleTapEnabled
                     ? .doubleTapDisabled
                     : .doubleTapEnabled
-        animation.stopAnimation(true)
-        animation = UIViewPropertyAnimator(duration: 0.4, curve: .easeOut) {
+
+        jumpAnimation = UIViewPropertyAnimator(duration: 0.4, curve: .easeOut) { [weak self] in
+            guard let self else { return }
             self.characterView.frame = .init(origin: .init(x: self.characterView.frame.origin.x,
                                                            y: targetY),
                                              size: self.characterView.frame.size)
         }
         characterView.isJumping = true
-        animation.addCompletion { position in
+        jumpAnimation.addCompletion { [weak self] position in
+            guard let self else { return }
             switch position {
             case .start, .current:
                 break
@@ -169,11 +185,15 @@ class JumpGameViewController: UIViewController {
                 self.characterView.isJumping = false
                 let duration: CGFloat = self.jumpState == .doubleTapDisabled ? 0.65 : 0.55
                 self.jumpState = self.jumpState == .doubleTapDisabled ? .tapDisabled : .doubleTapEnabled
-                self.animation = UIViewPropertyAnimator(duration: duration, curve: .easeIn) {
-                    self.characterView.frame = .init(origin: .init(x: self.characterView.frame.origin.x, y: Metric.CharacterView.initialY), size: self.characterView.frame.size)
+                self.jumpAnimation = UIViewPropertyAnimator(duration: duration, curve: .easeIn) { [weak self] in
+                    guard let self else { return }
+                    self.characterView.frame = .init(origin: .init(x: self.characterView.frame.origin.x,
+                                                                   y: Metric.CharacterView.initialY),
+                                                     size: self.characterView.frame.size)
                 }
                 self.characterView.isJumping = true
-                self.animation.addCompletion { position in
+                self.jumpAnimation.addCompletion { [weak self] position in
+                    guard let self else { return }
                     switch position {
                     case .start, .current:
                         break
@@ -184,12 +204,12 @@ class JumpGameViewController: UIViewController {
                         fatalError()
                     }
                 }
-                self.animation.startAnimation()
+                self.jumpAnimation.startAnimation()
             @unknown default:
                 fatalError()
             }
         }
-        animation.startAnimation()
+        jumpAnimation.startAnimation()
     }
     
     func resetMapBackground() {
@@ -200,7 +220,7 @@ class JumpGameViewController: UIViewController {
                                y: Metric.MapView.initialY,
                                width: self.mapContainerView.frame.width,
                                height: Metric.MapView.height)
-        mapView2.frame = .init(x: self.mapContainerView.frame.maxX,
+        mapView2.frame = .init(x: self.mapContainerView.frame.width,
                                y: Metric.MapView.initialY,
                                width: self.mapContainerView.frame.width,
                                height: Metric.MapView.height)
@@ -211,49 +231,66 @@ class JumpGameViewController: UIViewController {
         currentMapViews = [mapView1, mapView2]
     }
     
-    func setTimerBackgroun() {
-        self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerCallback), userInfo: nil, repeats: true)
+    func startGameLoop() {
+        displayLink?.invalidate()
+        lastTimestamp = -1
+        displayLink = CADisplayLink(target: self, selector: #selector(gameLoopTick(_:)))
+        displayLink?.add(to: .main, forMode: .common)
     }
-    
-    //타이머 동작 func
-    @objc func timerCallback() {
-        UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseIn, .beginFromCurrentState, .allowAnimatedContent, .allowUserInteraction], animations: {
-            self.currentMapViews.forEach {
-                $0.frame = .init(x: $0.frame.origin.x - 15,
-                                 y: $0.frame.origin.y,
-                                 width: $0.frame.width,
-                                 height: $0.frame.height)
-                $0.obstacles.forEach {
-                    if $0.tag == 1 { return }
-                    if $0.convert($0.bounds, to: nil).maxX < Metric.CharacterView.initialX { // 장애물이 캐릭터를 완전히 지나가면 point +1
-                        self.point += 1
-                        $0.tag = 1
-                    }
+
+    @objc func gameLoopTick(_ link: CADisplayLink) {
+        // On the first frame, record the timestamp as the baseline for deltaTime calculation
+        guard lastTimestamp >= 0 else {
+            lastTimestamp = link.timestamp
+            return
+        }
+        // Cap deltaTime to prevent a large position jump after returning from background (max 50ms)
+        let deltaTime = min(link.timestamp - lastTimestamp, 0.05)
+        lastTimestamp = link.timestamp
+
+        let moveDistance = Metric.Game.scrollSpeed * deltaTime
+
+        // Scroll the map
+        currentMapViews.forEach { $0.frame.origin.x -= moveDistance }
+
+        // Point scoring: check whether an obstacle has fully passed the character
+        currentMapViews.forEach { mapView in
+            mapView.obstacles.forEach { obstacle in
+                if obstacle.tag == 1 { return }
+                let globalMaxX = mapView.convert(CGPoint(x: obstacle.frame.maxX, y: 0), to: gameView).x
+                if globalMaxX < Metric.CharacterView.initialX {
+                    point += 1
+                    obstacle.tag = 1
                 }
             }
-        }) { _ in
-            if let firstMapView = self.currentMapViews.first {
-                firstMapView.obstacles.forEach {
-                    if $0.check(targetView: self.characterView, rootView: self.gameView) {
-                        self.timer?.invalidate()
-                        self.animation.stopAnimation(true)
-                        self.buttonState = .retry
+        }
+
+        // Collision detection (only check the leading map)
+        if let firstMapView = currentMapViews.first {
+            for obstacle in firstMapView.obstacles {
+                if obstacle.check(targetView: characterView, rootView: gameView) {
+                    displayLink?.invalidate()
+                    displayLink = nil
+                    if jumpAnimation.state == .active {
+                        jumpAnimation.stopAnimation(true)
                     }
+                    buttonState = .retry
+                    return
                 }
             }
-            
-            if let lastMapView = self.currentMapViews.last, lastMapView.frame.maxX <= self.mapContainerView.frame.maxX {
-                self.currentMapViews.first?.removeFromSuperview()
-                let mapView3 = MapView()
-                mapView3.frame = .init(x: self.mapContainerView.frame.maxX,
-                                       y: Metric.MapView.initialY,
-                                       width: self.mapContainerView.frame.width,
-                                       height: Metric.MapView.height)
-                mapView3.setObstacles(normalObstacles: self.normalObstacles,
-                                      wideObstacles: self.wideObstacles)
-                self.mapContainerView.addSubview(mapView3)
-                self.currentMapViews = [lastMapView, mapView3]
-            }
+        }
+
+        // Map cycling: recycle the map when the trailing edge of the last map enters the container
+        if let lastMapView = currentMapViews.last, lastMapView.frame.maxX <= mapContainerView.frame.width {
+            currentMapViews.first?.removeFromSuperview()
+            let newMapView = MapView()
+            newMapView.frame = .init(x: mapContainerView.frame.width,
+                                     y: Metric.MapView.initialY,
+                                     width: mapContainerView.frame.width,
+                                     height: Metric.MapView.height)
+            newMapView.setObstacles(normalObstacles: normalObstacles, wideObstacles: wideObstacles)
+            mapContainerView.addSubview(newMapView)
+            currentMapViews = [lastMapView, newMapView]
         }
     }
 }
@@ -261,5 +298,10 @@ class JumpGameViewController: UIViewController {
 extension JumpGameViewController: JumpGameControllable {
     @objc func finishLoading() {
         self.loadingFinished = true
+    }
+
+    @objc func handleAppDidBecomeActive() {
+        // Reset so that time accumulated while in the background is not applied all at once on the first frame
+        lastTimestamp = -1
     }
 }

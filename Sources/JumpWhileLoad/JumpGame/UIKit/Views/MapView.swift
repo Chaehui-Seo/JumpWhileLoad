@@ -18,8 +18,8 @@ class MapView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // 바닥 흙 표현
-    // 랜덤 생성보다는 불규칙한 뷰를 직접 추가
+    // Ground texture decoration.
+    // Irregularly-sized views are placed manually rather than generated randomly.
     func setMapBackground() {
         let view10 = GroundView(width: 10)
         let view5 = GroundView(width: 5)
@@ -46,24 +46,28 @@ class MapView: UIView {
     }
     
     func setObstacles(normalObstacles: [UIImage] = [], wideObstacles: [UIImage] = []) {
-        var remainedWidth = self.frame.width // 장애물을 설치할 수 있는 너비
-        var currentMinleading = Metric.minLeading // 현재의 최소 leading 위치
-        while remainedWidth >= CGFloat(Metric.normalObstacles) {
-            let obstacleWidth = Int(remainedWidth) < Metric.wideObstacles
+        let mapWidth = Int(self.frame.width)
+        var currentX = Metric.minLeading // Minimum x position at which the next obstacle can be placed
+
+        while currentX + Metric.normalObstacles <= mapWidth {
+            let remainingWidth = mapWidth - currentX
+            let obstacleWidth = remainingWidth < Metric.wideObstacles
                                 ? Metric.normalObstacles
-                                : [Metric.normalObstacles, Metric.wideObstacles].randomElement() ?? 0
+                                : [Metric.normalObstacles, Metric.wideObstacles].randomElement()!
+            let maxLeading = mapWidth - obstacleWidth
+            guard currentX <= maxLeading else { break }
+
+            let leadingPosition = Int.random(in: currentX...maxLeading)
+            let obstacleType: ObstacleView.Size = obstacleWidth == Metric.normalObstacles ? .normal : .wide
+
             let obstacle = ObstacleView()
-            let leadingPosition = Int.random(in: currentMinleading ... (Int(self.frame.width) - (obstacleWidth))) // 최소 leading ~ 최대 leading  중 위치시킬 leading 선정
-            let obstableType = obstacleWidth == Metric.normalObstacles
-                                ? ObstacleView.Size.normal
-                                : ObstacleView.Size.wide
-            obstacle.config(type: obstableType,
+            obstacle.config(type: obstacleType,
                             leading: leadingPosition,
-                            obstacleImages: obstableType == .normal ? normalObstacles : wideObstacles)
-            currentMinleading = leadingPosition + obstacleWidth + Metric.minLeading
-            remainedWidth = remainedWidth - CGFloat((currentMinleading))
+                            obstacleImages: obstacleType == .normal ? normalObstacles : wideObstacles)
             self.addSubview(obstacle)
             obstacles.append(obstacle)
+
+            currentX = leadingPosition + obstacleWidth + Metric.minLeading
         }
     }
     

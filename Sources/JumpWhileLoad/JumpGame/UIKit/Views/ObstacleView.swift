@@ -37,8 +37,11 @@ class ObstacleView: UIView {
     
     func check(targetView: UIView, rootView: UIView) -> Bool {
         guard let superview = self.superview else { return false }
-        let globalPosition = superview.convert(self.layer.presentation()?.frame ?? self.frame, to: rootView)
-        let rect = CGRectIntersection(globalPosition, targetView.layer.presentation()?.frame ?? targetView.frame)
-        return rect.width * rect.height >  (self.frame.width * self.frame.height * 0.04) // 난이도 조절을 위해서 CGRectIntersectsRect 대신 CGRectIntersection. 면적의 0.04만큼은 허용
+        // Obstacles are positioned via direct frame updates (CADisplayLink), so the model frame matches the on-screen position.
+        // Only the character is animated via UIViewPropertyAnimator, so its presentation layer is used.
+        let obstacleFrame = superview.convert(self.frame, to: rootView)
+        let characterFrame = targetView.layer.presentation()?.frame ?? targetView.frame
+        let intersection = obstacleFrame.intersection(characterFrame)
+        return intersection.width * intersection.height > self.frame.width * self.frame.height * 0.04 // Allow up to 4% area overlap for forgiveness
     }
 }

@@ -25,7 +25,7 @@ extension JumpGameViewController {
         NSLayoutConstraint.activate([
             label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.trailingAnchor.constraint(greaterThanOrEqualTo: view.trailingAnchor, constant: 40),
+            label.trailingAnchor.constraint(lessThanOrEqualTo: button.leadingAnchor, constant: -8),
             button.widthAnchor.constraint(equalToConstant: Metric.LoadingView.endButtonWidth),
             button.heightAnchor.constraint(equalToConstant: Metric.LoadingView.endButtonHeight),
             button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -58,7 +58,8 @@ extension JumpGameViewController {
     @objc func startButtonTapped() {
         if buttonState == .start {
             buttonState = .jump
-            timer?.invalidate()
+            displayLink?.invalidate()
+            displayLink = nil
             jumpState = .tapEnabled
             characterView.frame = .init(x: Metric.CharacterView.initialX,
                                         y: Metric.CharacterView.initialY,
@@ -66,7 +67,7 @@ extension JumpGameViewController {
                                         height: Metric.CharacterView.height)
             currentMapViews.forEach { $0.removeFromSuperview() }
             resetMapBackground()
-            setTimerBackgroun()
+            startGameLoop()
         }
     }
     
@@ -83,7 +84,8 @@ extension JumpGameViewController {
     
     @objc func retryButtonTapped() {
         buttonState = .jump
-        timer?.invalidate()
+        displayLink?.invalidate()
+        displayLink = nil
         jumpState = .tapEnabled
         characterView.frame = .init(x: Metric.CharacterView.initialX,
                                     y: Metric.CharacterView.initialY,
@@ -92,7 +94,7 @@ extension JumpGameViewController {
         characterView.isJumping = false
         currentMapViews.forEach { $0.removeFromSuperview() }
         resetMapBackground()
-        setTimerBackgroun()
+        startGameLoop()
         retryView.isHidden = true
     }
     

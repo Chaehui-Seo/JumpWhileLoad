@@ -4,7 +4,14 @@ public enum JumpWhileLoad {
     static let finishLoadingNotification = Notification.Name("JumpWhileLoad.FinishLoading")
     
     public static func finishLoading() {
-        NotificationCenter.default.post(name: finishLoadingNotification, object: nil)
+        // UI updates must always run on the main thread, even if called from a background thread
+        if Thread.isMainThread {
+            NotificationCenter.default.post(name: finishLoadingNotification, object: nil)
+        } else {
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: finishLoadingNotification, object: nil)
+            }
+        }
     }
     
     public static func builder() -> Builder {
