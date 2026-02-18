@@ -11,13 +11,10 @@ public enum JumpWhileLoadSwiftUI {
     public static func finishLoading() {
         JumpWhileLoad.finishLoading()
     }
-    
+
     @MainActor public static func present(
-            character: UIImage? = nil,
-            jumpCharacter: UIImage? = nil,
-            normalObstacles: [UIImage]? = nil,
-            wideObstacles: [UIImage]? = nil,
-            animated: Bool = true
+        _ builder: JumpWhileLoad.Builder = .init(),
+        animated: Bool = true
     ) {
         guard let topVC = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
@@ -28,40 +25,14 @@ public enum JumpWhileLoadSwiftUI {
             print("⚠️ JumpWhileLoadSwiftUI: Failed to get top view controller")
             return
         }
-        
-        var builder = JumpWhileLoad.builder()
-        
-        if let character {
-            builder = builder.withCharacter(character)
-        }
-        
-        if let jumpCharacter {
-            builder = builder.withJumpCharacter(jumpCharacter)
-        }
-        
-        if let normalObstacles {
-            builder = builder.withNormalObstacles(normalObstacles)
-        }
-        
-        if let wideObstacles {
-            builder = builder.withWideObstacles(wideObstacles)
-        }
 
         topVC.present(builder.build(), animated: animated)
     }
-    
+
     @MainActor public static func fullScreenView(
-        character: UIImage? = nil,
-        jumpCharacter: UIImage? = nil,
-        normalObstacles: [UIImage]? = nil,
-        wideObstacles: [UIImage]? = nil
+        _ builder: JumpWhileLoad.Builder = .init()
     ) -> some View {
-        JumpWhileLoadView(
-            character: character,
-            jumpCharacter: jumpCharacter,
-            normalObstacles: normalObstacles,
-            wideObstacles: wideObstacles
-        )
-        .ignoresSafeArea()
+        JumpWhileLoadView(builder)
+            .ignoresSafeArea()
     }
 }
