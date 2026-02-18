@@ -114,8 +114,10 @@ JumpWhileLoadSwiftUI.present(
 | `withJumpCharacter` | Character image while jumping | 50×50 pt |
 | `withNormalObstacles` | One or more normal obstacle images (chosen randomly) | 40×40 pt |
 | `withWideObstacles` | One or more wide obstacle images (chosen randomly) | 70×70 pt |
+<img width="400" height="600" alt="Group 15" src="https://github.com/user-attachments/assets/4cc88f12-54bd-4f30-8463-91028f2b72db" />
 
 All parameters are optional. Any omitted parameter falls back to the built-in default asset.
+
 
 ## SampleApp
 
