@@ -16,22 +16,21 @@ class ViewController: UIViewController {
 
     @IBAction func buttonDidTap(_ sender: Any) {
         self.present(JumpWhileLoad.Builder().build(), animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             JumpWhileLoad.finishLoading()
         }
     }
 
     @IBAction func customButtonDidTap(_ sender: Any) {
         let message = """
-        다음 이미지로 커스텀됩니다:
-        • 캐릭터: dino_1
-        • 점프 캐릭터: dino_2
-        • 일반 장애물: dino_3, dino_4
-        • 넓은 장애물: dino_5, dino_6
+        Apply the custom images included in this sample?
+
+        • Main character: Penguin → Dinosaur
+        • Background: Snow → Forest
         """
-        let alert = UIAlertController(title: "커스텀 이미지 확인", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        alert.addAction(UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+        let alert = UIAlertController(title: "Apply Custom Images?", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Apply", style: .default) { [weak self] _ in
             guard let self else { return }
             self.present(
                 JumpWhileLoad.Builder()
@@ -44,7 +43,7 @@ class ViewController: UIViewController {
                     .build(),
                 animated: true
             )
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 JumpWhileLoad.finishLoading()
             }
         })
